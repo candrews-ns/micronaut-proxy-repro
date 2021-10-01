@@ -15,67 +15,37 @@
  */
 package com.example;
 
-import io.micronaut.http.*;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.MutableHttpRequest;
+import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.ProxyHttpClient;
 import io.micronaut.http.uri.UriBuilder;
-import io.micronaut.rxjava2.http.client.proxy.RxProxyHttpClient;
 import io.micronaut.validation.Validated;
-import io.reactivex.Flowable;
-import io.reactivex.Single;
-
 import jakarta.inject.Inject;
+import org.reactivestreams.Publisher;
+
 import javax.validation.constraints.NotBlank;
 import java.net.URI;
 
-@Controller("/")
+@Controller("/api")
 @Validated
 public class HelloController {
 
     @Inject
-    RxProxyHttpClient rxHttpClient;
-
-    @Inject
     ProxyHttpClient httpClient;
 
-    @Get(uri = "/blocking-first")
-    public HttpResponse<?> blockingFirst() {
+    @Get(uri = "/publisher")
+    public Publisher<MutableHttpResponse<?>> publisher() {
         URI uri = UriBuilder.of("http://localhost:8080/hello/foo").build();
         MutableHttpRequest<?> req = HttpRequest.GET(uri);
-        return rxHttpClient.proxy(req).blockingFirst();
-    }
-
-    @Get(uri = "/single-or-error")
-    public Single<MutableHttpResponse<?>> singleOrError() {
-        URI uri = UriBuilder.of("http://localhost:8080/hello/foo").build();
-        MutableHttpRequest<?> req = HttpRequest.GET(uri);
-        return rxHttpClient.proxy(req).singleOrError();
-    }
-    
-    @Get(uri = "/flowable")
-    public Flowable<MutableHttpResponse<?>> flowable() {
-        URI uri = UriBuilder.of("http://localhost:8080/hello/foo").build();
-        MutableHttpRequest<?> req = HttpRequest.GET(uri);
-        return rxHttpClient.proxy(req);
-    }
-
-    @Get(uri = "/from-publisher")
-    public Flowable<MutableHttpResponse<?>> fromPublisher() {
-        URI uri = UriBuilder.of("http://localhost:8080/hello/foo").build();
-        MutableHttpRequest<?> req = HttpRequest.GET(uri);
-        return Flowable.fromPublisher(httpClient.proxy(req));
-    }
-
-    @Get(uri = "/from-publisher-single-or-error")
-    public Single<MutableHttpResponse<?>> fromPublisherSingleOrError() {
-        URI uri = UriBuilder.of("http://localhost:8080/hello/foo").build();
-        MutableHttpRequest<?> req = HttpRequest.GET(uri);
-        return Flowable.fromPublisher(httpClient.proxy(req)).singleOrError();
+        return httpClient.proxy(req);
     }
 
     @Get(uri = "/hello/{name}", produces = MediaType.TEXT_PLAIN)
-    public Single<String> hello(@NotBlank String name) {
-        return Single.just("Hello " + name + "!");
+    public String hello(@NotBlank String name) {
+        return "Hello " + name + "!";
     }
 }

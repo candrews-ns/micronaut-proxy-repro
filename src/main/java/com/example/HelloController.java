@@ -18,13 +18,13 @@ package com.example;
 import io.micronaut.http.*;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.client.RxProxyHttpClient;
 import io.micronaut.http.uri.UriBuilder;
+import io.micronaut.rxjava2.http.client.proxy.RxProxyHttpClient;
 import io.micronaut.validation.Validated;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.validation.constraints.NotBlank;
 import java.net.URI;
 

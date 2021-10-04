@@ -1,21 +1,34 @@
 package com.example;
 
-import io.micronaut.runtime.EmbeddedApplication;
+import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
-
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 @MicronautTest
-class DemoTest {
+class ProxyViaFilterOrControllerTest {
 
     @Inject
-    EmbeddedApplication<?> application;
+    @Client("/")
+    HttpClient client;
 
     @Test
-    void testItWorks() {
-        Assertions.assertTrue(application.isRunning());
+    void test_direct() {
+        String s = client.toBlocking().retrieve("/api/hello/foo");
+        Assertions.assertEquals("Hello foo!", s);
     }
 
+    @Test
+    void test_via_controller() {
+        String s = client.toBlocking().retrieve("/controller/publisher");
+        Assertions.assertEquals("Hello foo!", s);
+    }
+
+    @Test
+    void test_via_filter() {
+        String s = client.toBlocking().retrieve("/hello/foo");
+        Assertions.assertEquals("Hello foo!", s);
+    }
 }

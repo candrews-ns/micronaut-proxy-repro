@@ -9,6 +9,8 @@
         </encoder>
     </appender>
 
+    <logger name="io.micronaut.http" level="trace"/>
+
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>

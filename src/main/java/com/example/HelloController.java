@@ -7,6 +7,7 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.ProxyHttpClient;
 import io.micronaut.http.uri.UriBuilder;
+import io.micronaut.runtime.server.EmbeddedServer;
 import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
 
@@ -21,9 +22,9 @@ public class HelloController {
     ProxyHttpClient proxyHttpClient;
 
     @Inject
-    HttpClient httpClient;
+    EmbeddedServer server;
 
-    // Directly return a Publisher<...> -- does not work.
+    // Directly return a Publisher<...> -- does not work, returns an empty body.
     @Get(uri = "/publisher")
     public Publisher<MutableHttpResponse<?>> publisher() {
         MutableHttpRequest<?> req = HttpRequest.GET(getUri());
@@ -33,8 +34,8 @@ public class HelloController {
     private URI getUri() {
         return UriBuilder.of("/api/hello/foo")
                 .scheme("http")
-                .host("localhost")
-                .port(8080)
+                .host(server.getHost())
+                .port(server.getPort())
                 .build();
     }
 }

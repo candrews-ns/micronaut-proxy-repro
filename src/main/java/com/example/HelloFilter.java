@@ -11,6 +11,10 @@ import io.micronaut.runtime.server.EmbeddedServer;
 import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
 
+// This is a filter at the root, implementing a (working) way of proxying from a filter.
+// It's at the root, because that's how we'd need to use it in the CWS, so we're making
+// sure we can do that.
+
 @Filter("/**")
 public class HelloFilter implements HttpServerFilter {
     @Inject
@@ -21,7 +25,7 @@ public class HelloFilter implements HttpServerFilter {
 
     @Override
     public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request, ServerFilterChain chain) {
-        if (request.getPath().startsWith("/api"))
+        if (request.getPath().startsWith("/api") || request.getPath().startsWith("/controller"))
             return chain.proceed(request);
 
         MutableHttpRequest<?> mutableHttpRequest = request.mutate()

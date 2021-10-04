@@ -6,9 +6,12 @@ import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.ProxyHttpClient;
+import io.micronaut.http.client.RxProxyHttpClient;
 import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.runtime.server.EmbeddedServer;
-import jakarta.inject.Inject;
+import javax.inject.Inject;
+
+import io.reactivex.Single;
 import org.reactivestreams.Publisher;
 
 import java.net.URI;
@@ -29,6 +32,13 @@ public class HelloController {
     public Publisher<MutableHttpResponse<?>> publisher() {
         MutableHttpRequest<?> req = HttpRequest.GET(getUri());
         return proxyHttpClient.proxy(req);
+    }
+
+    // Return Single<...> -- works in MN 2.5.13
+    @Get(uri = "/single")
+    public Single<MutableHttpResponse<?>> single() {
+        MutableHttpRequest<?> req = HttpRequest.GET(getUri());
+        return ((RxProxyHttpClient) proxyHttpClient).proxy(req).singleOrError();
     }
 
     private URI getUri() {

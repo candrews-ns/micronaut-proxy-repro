@@ -3,7 +3,7 @@ package com.example;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import jakarta.inject.Inject;
+import javax.inject.Inject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,8 +21,14 @@ class ProxyViaFilterOrControllerTest {
     }
 
     @Test
-    void test_via_controller() {
+    void test_via_controller_publisher() {
         String s = client.toBlocking().retrieve("/controller/publisher");
+        Assertions.assertEquals("Hello foo!", s);
+    }
+
+    @Test
+    void test_via_controller_single() {
+        String s = client.toBlocking().retrieve("/controller/single");
         Assertions.assertEquals("Hello foo!", s);
     }
 

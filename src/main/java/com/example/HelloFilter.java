@@ -8,7 +8,7 @@ import io.micronaut.http.client.ProxyHttpClient;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
 import io.micronaut.runtime.server.EmbeddedServer;
-import jakarta.inject.Inject;
+import javax.inject.Inject;
 import org.reactivestreams.Publisher;
 
 // This is a filter at the root, implementing a (working) way of proxying from a filter.
